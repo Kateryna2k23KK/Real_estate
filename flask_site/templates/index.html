@@ -1,33 +1,15 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Real Estate Project</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
+    <title>Flask Example</title>
 </head>
 <body>
-    <!-- Background image -->
-    <div class="hero">
-        <img src="{{ url_for('static', filename='images/rs1.JPEG') }}" alt="Project Image">
-    </div>
-
-    <!-- Task and Objective -->
-    <div class="content">
-        <h1><strong>Task</strong>: Predicting House Prices</h1>
-        <p>The goal is to predict house prices based on various factors such as house size, number of rooms, property type, and other characteristics. The system should be able to process historical data on real estate prices and provide accurate predictions for new properties.</p>
-
-        <h2><strong>Goal</strong></h2>
-        <p>The goal of the project is to develop a system that predicts real estate prices based on multiple factors, including square footage, number of rooms, location, and other features. To achieve this, data needs to be collected and processed using machine learning methods, followed by training models (Linear Regression, Random Forest, and XGBoost) to accurately predict house prices based on these factors.</p>
-
-        <p>Additionally, the project includes creating an API that will accept input data from the user and return the predicted result. It is also important to evaluate the model's performance using accuracy metrics such as MAE and RMSE in order to choose the most suitable model for real-world conditions.</p>
-
-        <h2><strong>Code Explanation</strong></h2>
-        <pre><code>
-import pandas as pd
-import numpy as np
-# Your code continues here...
-        </code></pre>
-    </div>
+    <h1>Welcome to My Flask Site!</h1>
+    <img src="https://via.placeholder.com/150" alt="Example Image">
+    <p>This is a simple Flask application hosted on Render.</p>
+    <p>Enjoy browsing!</p>
 </body>
 </html>

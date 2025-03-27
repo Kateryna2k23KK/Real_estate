@@ -1,18 +1,36 @@
 body {
     font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
     margin: 0;
     padding: 0;
     background-color: #f9f9f9;
 }
 
+<<<<<<< HEAD
 .hero img {
     width: 100%;
     height: auto; /* Автоматическая высота для лучшего отображения на мобильных устройствах */
     object-fit: cover;
+=======
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.5rem;
+>>>>>>> 39f4f1a (Update Procfile to use main.py)
 }
 
 .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     padding: 20px;
+<<<<<<< HEAD
     background-color: #fff;
     text-align: left;
     max-width: 1200px; /* Ограничиваем ширину контента */
@@ -63,4 +81,32 @@ p {
     p {
         font-size: 1em;
     }
+=======
+}
+
+.image {
+    width: 70%;
+    max-width: 500px;
+    margin: 20px 0;
+    border-radius: 10px;
+    display: block;
+}
+
+
+.text {
+    font-size: 1.2rem;
+    text-align: center;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+>>>>>>> 39f4f1a (Update Procfile to use main.py)
 }
