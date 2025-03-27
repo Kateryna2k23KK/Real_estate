@@ -1,15 +1,22 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flask Example</title>
+    <title>Real Estate Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <body>
-    <h1>Welcome to My Flask Site!</h1>
-    <img src="https://via.placeholder.com/150" alt="Example Image">
-    <p>This is a simple Flask application hosted on Render.</p>
-    <p>Enjoy browsing!</p>
+    <!-- Картинка, которая занимает весь экран -->
+    <img src="{{ url_for('static', filename='images/rs1.JPEG') }}" alt="Background Image">
+
+    <!-- Заголовки и абзацы -->
+    <div class="content">
+        <h1 class="heading">1. Заголовок 1</h1>
+        <p class="paragraph">Текст под первым заголовком. Это абзац текста, который идет после первого заголовка.</p>
+
+        <h1 class="heading">2. Заголовок 2</h1>
+        <p class="paragraph">Текст под вторым заголовком. Это абзац текста, который идет после второго заголовка.</p>
+    </div>
 </body>
 </html>
