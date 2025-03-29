@@ -7,16 +7,775 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/style.css') }}">
 </head>
 <body>
-    <!-- Картинка, которая занимает весь экран -->
+
+
+
+    <!-- The image that takes up the entire screen -->
     <img src="{{ url_for('static', filename='images/rs1.JPEG') }}" alt="Background Image">
 
-    <!-- Заголовки и абзацы -->
-    <div class="content">
-        <h1 class="heading">1. Заголовок 1</h1>
-        <p class="paragraph">Текст под первым заголовком. Это абзац текста, который идет после первого заголовка.</p>
 
-        <h1 class="heading">2. Заголовок 2</h1>
-        <p class="paragraph">Текст под вторым заголовком. Это абзац текста, который идет после второго заголовка.</p>
+
+    <div style="text-align: right; margin-right: 30px; margin-top: 20px;">
+        <br><p font-size: 18px;">The work was done by Kateryna Yakymenko </p>
+        <br><p font-size: 18px;">The data was taken from Kaggle (House Prices - Advanced Regression Techniques)</p>
     </div>
+
+
+    <!-- Container with content -->
+    <div class="content">
+        <h1 class="heading">Task:</h1>
+        <p class="paragraph" style="margin-bottom: 0;" >
+            Develop a system that predicts the price of real estate based on various factors such as house size, number of rooms, property type, and other characteristics. The system should be capable of processing historical data on real estate prices and providing accurate predictions for new properties.
+            The goal of the project is to develop a system that predicts real estate prices based on multiple factors, including square footage, number of rooms, location, and other features.
+        </p>
+
+        <h1 class="heading">Goal:</h1>
+        <p class="paragraph" style="margin-bottom: 0;">
+            To accomplish this task, it is necessary to collect and process data using machine learning methods, then train models (Linear Regression, Random Forest, and XGBoost) to accurately predict house prices based on these factors.
+            It is also important to evaluate the models' performance using accuracy metrics such as MAE and RMSE to select the most suitable model for real-world conditions.
+        </p>
+    </div>
+
+
+
+
+
+
+    <!-- Importing libraries -->
+
+    <h1 class="heading">Importing libraries</h1>
+
+    <p class="paragraph">
+        To begin the analysis, the following libraries need to be imported, as they will be used throughout the process. These libraries provide essential tools for data manipulation, model training, and performance evaluation. The list of libraries:
+    <ul>
+        <ul class="library-list">
+            <li><strong>pandas</strong> - for loading and manipulating data.</li>
+            <li><strong>numpy</strong> - for performing numerical operations.</li>
+            <li><strong>matplotlib.pyplot and seaborn</strong> - for visualizing data and creating plots.</li>
+            <li><strong>sklearn.model_selection</strong> - for splitting the data into training and test sets, cross-validation, and hyperparameter tuning.</li>
+            <li><strong>sklearn.preprocessing</strong> - for scaling and normalizing the data.</li>
+            <li><strong>sklearn.linear_model</strong> - for training and evaluating the linear regression model.</li>
+            <li><strong>sklearn.ensemble</strong> - for working with the random forest model.</li>
+            <li><strong>xgboost</strong> - for working with the XGBoost model.</li>
+            <li><strong>sklearn.metrics</strong> - for evaluating model performance using metrics like RMSE, R², and MSE.</li>
+            <li><strong>shap</strong> - for interpreting model predictions and visualizing feature importance.</li>
+            <li><strong>sklearn.decomposition</strong> - for dimensionality reduction using PCA.</li>
+        </ul>
+        </p>
+
+        <!-- Data loading and initial data analysis -->
+        <h1 class="heading">Data loading and initial data analysis</h1>
+        <div class="image-container">
+            <!-- mage for the second paragraph -->
+            <img src="{{ url_for('static', filename='images/1.1.png') }}" alt="Image under Heading 4" class="sub-image-small">
+            <img src="{{ url_for('static', filename='images/1.2.png') }}" alt="Image under Heading 4" class="sub-image-small">
+        </div>
+        <p class="paragraph">
+            The data contains 1460 rows and 81 columns. The target variable, `SalePrice`, ranges from 34,900 to 755,000, with an average value of 180,921. There are missing values in some columns, such as `LotFrontage`, `MasVnrType`, `PoolQC`, and others. Columns with numerical data, such as `OverallQual`, `GrLivArea`, and `TotRmsAbvGrd`, have a strong correlation with the sale price.
+        </p>
+
+        <p class="paragraph">
+            The dataset includes many categorical features, such as `MSZoning`, `Street`, and `GarageType`, which require encoding for use in models. Additionally, numerical data will need to be scaled to improve the performance of machine learning models.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 1. Load the data<br>
+            train_data = pd.read_csv('...')<br><br>
+
+            # 2. Initial data analysis<br>
+            print(train_data.head())  # First 5 rows<br>
+            print(train_data.info())  # Information about columns<br>
+            print(train_data.describe())  # Descriptive statistics for numerical data
+        </span>
+        </p>
+
+        <!-- Handling missing values and encoding categorical variables -->
+        <h1 class="heading">Handling missing values and encoding categorical variables</h1>
+        <p class="paragraph">
+            We filled missing values in numerical columns like `LotFrontage` with the median, and in categorical columns such as `Alley`, `MasVnrType`, with the mode. After that, we removed rows with remaining missing values. Then, we applied One-Hot Encoding to categorical features, transforming them into binary columns. This process helped prepare the data for analysis and modeling, minimizing information loss and correctly handling categorical variables.
+        </p>
+        <p class="paragraph"
+        >
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 3. Handle missing values<br>
+            train_data['LotFrontage'] = train_data['LotFrontage'].fillna(train_data['LotFrontage'].median())<br>
+            train_data['Alley'] = train_data['Alley'].fillna(train_data['Alley'].mode()[0])<br>
+            train_data['MasVnrType'] = train_data['MasVnrType'].fillna(train_data['MasVnrType'].mode()[0])<br>
+            train_data['BsmtQual'] = train_data['BsmtQual'].fillna(train_data['BsmtQual'].mode()[0])<br>
+            train_data['BsmtCond'] = train_data['BsmtCond'].fillna(train_data['BsmtCond'].mode()[0])<br>
+            train_data['BsmtExposure'] = train_data['BsmtExposure'].fillna(train_data['BsmtExposure'].mode()[0])<br>
+            train_data['BsmtFinType1'] = train_data['BsmtFinType1'].fillna(train_data['BsmtFinType1'].mode()[0])<br>
+            train_data['BsmtFinType2'] = train_data['BsmtFinType2'].fillna(train_data['BsmtFinType2'].mode()[0])<br>
+            train_data['Electrical'] = train_data['Electrical'].fillna(train_data['Electrical'].mode()[0])<br>
+            train_data['FireplaceQu'] = train_data['FireplaceQu'].fillna(train_data['FireplaceQu'].mode()[0])<br>
+            train_data['GarageType'] = train_data['GarageType'].fillna(train_data['GarageType'].mode()[0])<br>
+            train_data['GarageFinish'] = train_data['GarageFinish'].fillna(train_data['GarageFinish'].mode()[0])<br>
+            train_data['GarageQual'] = train_data['GarageQual'].fillna(train_data['GarageQual'].mode()[0])<br>
+            train_data['GarageCond'] = train_data['GarageCond'].fillna(train_data['GarageCond'].mode()[0])<br>
+            train_data['PoolQC'] = train_data['PoolQC'].fillna(train_data['PoolQC'].mode()[0])<br>
+            train_data['Fence'] = train_data['Fence'].fillna(train_data['Fence'].mode()[0])<br>
+            train_data['MiscFeature'] = train_data['MiscFeature'].fillna(train_data['MiscFeature'].mode()[0])<br><br>
+
+            # Remove rows with remaining missing values<br>
+            train_data_cleaned = train_data.dropna()<br><br>
+
+            # 4. One-Hot Encoding of categorical variables<br>
+            train_data_cleaned = pd.get_dummies(train_data_cleaned)<br>
+        </span>
+        </p>
+
+
+        <!-- Split and Standardize the Data -->
+        <h1 class="heading">Split and Standardize the Data</h1>
+        <p class="paragraph">
+            We split the data into features (`X`) and the target variable (`y`), separating the `SalePrice` column from the rest of the dataset. Then, we standardized the numerical features using `StandardScaler`, which transforms the data to have a mean of 0 and a standard deviation of 1. This step helps improve the performance of machine learning algorithms.
+        </p>
+
+        <p class="paragraph">
+    <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+        # 5. Split the data into features and target variable<br>
+        X = train_data_cleaned.drop('SalePrice', axis=1)<br>
+        y = train_data_cleaned['SalePrice']<br><br>
+
+        # 6. Standardize the numerical data<br>
+        scaler = StandardScaler()<br>
+        X_scaled = scaler.fit_transform(X)
+    </span>
+        </p>
+
+        <!-- Split the Data into Training and Testing Sets -->
+        <h1 class="heading">Split the Data into Training and Testing Sets</h1>
+        <p class="paragraph">
+            The data was split into training and testing sets, with 80% of the data used for training the model and 20% reserved for testing. This approach helps evaluate the model's performance on unseen data and prevents overfitting. The `random_state` value ensures the reproducibility of the data splitting.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 7. Split the data into training and testing sets<br>
+            X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+        </span>
+        </p>
+
+        <!-- Outlier Analysis -->
+        <h1 class="heading">Outlier Analysis</h1>
+        <p class="paragraph">
+            Outliers were identified using Z-scores, and data points with a Z-score greater than 3 were removed from the training set. This step helped eliminate extreme values that could negatively affect the model, improving its stability and accuracy.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 8. Outlier analysis<br>
+            # Use Z-scores to identify outliers<br>
+            from scipy.stats import zscore<br><br>
+
+            z_scores = np.abs(zscore(X_train))<br>
+            X_train_cleaned = X_train[(z_scores < 3).all(axis=1)]<br>
+            y_train_cleaned = y_train[(z_scores < 3).all(axis=1)]
+        </span>
+        </p>
+
+        <!-- Train Linear Regression Model -->
+        <h1 class="heading">Train Linear Regression Model</h1>
+        <p class="paragraph">
+            The Linear Regression model was trained using the cleaned and preprocessed training data. This step establishes a baseline model to predict house prices based on the features, helping to evaluate the relationship between the predictors and the target variable.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 9. Train Linear Regression model<br>
+            lr_model = LinearRegression()<br>
+            lr_model.fit(X_train, y_train)
+        </span>
+        </p>
+
+        <!-- Predictions using Linear Regression -->
+        <h1 class="heading">Predictions using Linear Regression</h1>
+        <p class="paragraph">
+            After training the linear regression model, predictions were made for the test dataset. This allows assessing how well the model can predict house prices based on new data it hasn't seen during training.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 10. Predict using Linear Regression<br>
+            y_pred_lr = lr_model.predict(X_test)
+        </span>
+        </p>
+
+        <!-- Linear Regression Model Evaluation -->
+        <h1 class="heading">Linear Regression Model Evaluation</h1>
+        <div class="image-container">
+            <!-- Image for linear regression model evaluation -->
+            <img src="{{ url_for('static', filename='images/1.3.png') }}" alt="Image for model evaluation" class="sub-image-small">
+        </div>
+
+        <p class="paragraph">
+            The linear regression model was evaluated using two key metrics: RMSE (Root Mean Squared Error) and R² (Coefficient of Determination). The RMSE value was 27,986.89, indicating the average deviation between the actual and predicted house prices. The R² value was 0.88, meaning the model explains 88% of the variance in the target variable (SalePrice), which demonstrates a good model accuracy.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 11. Evaluate Linear Regression model<br>
+            mse_lr = mean_squared_error(y_test, y_pred_lr)<br>
+            rmse_lr = mse_lr ** 0.5<br>
+            r2_lr = r2_score(y_test, y_pred_lr)<br><br>
+
+            print(f"Linear Regression RMSE: {rmse_lr}")<br>
+            print(f"Linear Regression R²: {r2_lr}")
+        </span>
+        </p>
+
+        <!-- Cross-validation for Linear Regression -->
+        <h1 class="heading">Cross-validation for Linear Regression</h1>
+        <div class="image-container">
+            <!-- Image for cross-validation of a linear regression model -->
+            <img src="{{ url_for('static', filename='images/1.4.png') }}" alt="Cross-validation for Linear Regression" class="sub-image-small">
+        </div>
+
+        <p class="paragraph">
+            Cross-validation with 5 folds was performed to evaluate the linear regression model. The average Mean Squared Error (MSE) was -1,361,427,316.34. The negative value indicates that a negative error score is used, but this helps understand how the model will perform on different subsets of the data. The lower the error, the more accurate the model.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 12. Cross-validation for Linear Regression<br>
+            cv_lr = cross_val_score(lr_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br><br>
+
+            print(f"Linear Regression Cross-validation MSE: {np.mean(cv_lr)}")
+        </span>
+        </p>
+
+        <!-- Training and Prediction with Random Forest and XGBoost -->
+        <h1 class="heading">Training and Prediction with Random Forest and XGBoost</h1>
+        <p class="paragraph">
+            The Random Forest and XGBoost models were trained on the training data with 100 estimators and a fixed random_state of 42. After training, each model was used to predict house prices on the test data. Random Forest employs an ensemble of decision trees to improve prediction accuracy, while XGBoost applies boosting methods to enhance model performance.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 13. Train Random Forest model<br>
+            rf_model = RandomForestRegressor(n_estimators=100, random_state=42)<br>
+            rf_model.fit(X_train, y_train)<br><br>
+
+            # 14. Predict using Random Forest<br>
+            y_pred_rf = rf_model.predict(X_test)<br><br>
+
+            # 15. Train XGBoost model<br>
+            xgb_model = xgb.XGBRegressor(n_estimators=100, random_state=42)<br>
+            xgb_model.fit(X_train, y_train)<br><br>
+
+            # 16. Predict using XGBoost<br>
+            y_pred_xgb = xgb_model.predict(X_test)
+        </span>
+        </p>
+
+
+        <!-- Model Evaluation and Cross-Validation for Random Forest and XGBoost -->
+        <h1 class="heading">Model Evaluation and Cross-Validation for Random Forest and XGBoost</h1>
+        <div class="image-container">
+            <!-- Image for model evaluation -->
+            <img src="{{ url_for('static', filename='images/1.5.png') }}" alt="Model Evaluation" class="sub-image-small">
+        </div>
+
+        <p class="paragraph">
+            The Random Forest and XGBoost models were evaluated using Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and R² scores on the test data. For Random Forest, the RMSE was approximately 27,305 and R² was 0.885, indicating good model performance. XGBoost showed a slightly higher RMSE of around 28,129 and an R² of 0.878. Cross-validation for Random Forest resulted in a negative MSE of approximately -1.02 billion, suggesting strong model performance with consistent results across different data splits.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 17. Evaluate Random Forest model<br>
+            mse_rf = mean_squared_error(y_test, y_pred_rf)<br>
+            rmse_rf = mse_rf ** 0.5<br>
+            r2_rf = r2_score(y_test, y_pred_rf)<br><br>
+
+            print(f"Random Forest RMSE: {rmse_rf}")<br>
+            print(f"Random Forest R²: {r2_rf}")<br><br>
+
+            # 18. Cross-validation for Random Forest<br>
+            cv_rf = cross_val_score(rf_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br>
+            print(f"Random Forest Cross-validation MSE: {np.mean(cv_rf)}")<br><br>
+
+            # 19. Evaluate XGBoost model<br>
+            mse_xgb = mean_squared_error(y_test, y_pred_xgb)<br>
+            rmse_xgb = mse_xgb ** 0.5<br>
+            r2_xgb = r2_score(y_test, y_pred_xgb)<br><br>
+
+            print(f"XGBoost RMSE: {rmse_xgb}")<br>
+            print(f"XGBoost R²: {r2_xgb}")
+        </span>
+        </p>
+
+
+        <!-- Feature importance analysis with SHAP -->
+        <h1 class="heading">Feature importance analysis with SHAP</h1>
+
+        <!-- Large image -->
+        <div class="image-container-large" style="max-width: 70%; height: auto;">
+            <img src="{{ url_for('static', filename='images/for_project_1.png') }}" alt="Actual vs Predicted Prices Plot" class="sub-image-large" style="width: 100%; height: auto;">
+        </div>
+
+        <p class="paragraph">
+            SHAP analysis revealed that the most influential factors affecting property prices are Overall Quality (<code>OverallQual</code>), Living Area (<code>GrLivArea</code>), Basement Area (<code>TotalBsmtSF</code>), Year Built (<code>YearBuilt</code>), and Garage Area (<code>GarageArea</code>). Higher values for these features generally lead to higher property prices. For example, a house with a large living area but low quality may still be priced lower than a smaller but higher-quality house.
+        </p>
+
+        <p class="paragraph">
+            Additionally, the number of garage spaces (<code>GarageCars</code>) and the presence of a fireplace (<code>Fireplaces</code>) also impact the final price, albeit to a lesser extent. SHAP values help not only to identify the most important features but also to understand the direction and magnitude of their influence on the model’s predictions.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 20. Model interpretation with SHAP<br>
+            X_train_df = pd.DataFrame(X_train, columns=X.columns)<br>
+            X_test_df = pd.DataFrame(X_test, columns=X.columns)<br><br>
+
+            # SHAP explainer<br>
+            explainer = shap.Explainer(xgb_model, X_train_df)<br>
+            shap_values = explainer(X_test_df)<br><br>
+
+            # Feature importance visualization<br>
+            shap.summary_plot(shap_values, X_test_df)
+        </span>
+        </p>
+
+
+
+        <!--  Actual vs Predicted Prices Plot (XGBoost) -->
+        <h1 class="heading">Additional Visualizations</h1>
+
+        <!-- 1 image -->
+        <div class="image-container-large" style="max-width: 70%; height: auto;">
+            <img src="{{ url_for('static', filename='images/for_project_2.png') }}" alt="Actual vs Predicted Prices Plot" class="sub-image-large" style="width: 100%; height: auto;">
+        </div>
+
+        <p class="paragraph">
+            <strong>1. Actual vs. Predicted Prices Plot (XGBoost):</strong><br>
+            The points on the plot are clustered along the red dashed line, indicating high prediction accuracy. The closer the points are to this line, the better the model predicts prices. There is slight dispersion at higher values, which may suggest the influence of rare property characteristics.
+        </p>
+
+        <!--  2 image -->
+        <div class="image-container-large" style="max-width: 70%; height: auto;">
+            <img src="{{ url_for('static', filename='images/for_project_3.png') }}" alt="Actual vs Predicted Prices Plot" class="sub-image-large" style="width: 100%; height: auto;">
+        </div>
+        <p class="paragraph">
+            <strong>2. Residuals Distribution:</strong><br>
+            The histogram of residuals shows that most prediction errors are concentrated around zero, indicating a well-balanced model. The smooth shape of the graph without noticeable skew suggests that the model makes predictions consistently across the entire price range without significant systematic bias.
+        </p>
+
+        <!--  3 image -->
+        <div class="image-container-large" style="max-width: 70%; height: auto;">
+            <img src="{{ url_for('static', filename='images/for_project_4.png') }}" alt="Actual vs Predicted Prices Plot" class="sub-image-large" style="width: 100%; height: auto;">
+        </div>
+        <p class="paragraph">
+            <strong>3. PCA Visualization:</strong><br>
+            The separation of data in the PCA plot indicates that key property characteristics form distinct clusters. This suggests that property prices depend on several critical factors. The presence of individual points far from the main data cluster may indicate unique properties with distinct features.
+        </p>
+
+        <p class="paragraph">
+            <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 21. Additional visualizations:<br><br>
+            # 1. Actual vs Predicted Prices plot<br>
+            plt.figure(figsize=(8, 6))<br>
+            plt.scatter(y_test, y_pred_xgb, alpha=0.7, color='blue')<br>
+            plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')<br>
+            plt.title('Actual vs Predicted Prices (XGBoost)', fontsize=14)<br>
+            plt.xlabel('Actual Prices')<br>
+            plt.ylabel('Predicted Prices')<br>
+            plt.show()<br><br>
+
+            # 2. Residuals plot<br>
+            residuals = y_test - y_pred_xgb<br>
+            plt.figure(figsize=(8, 6))<br>
+            sns.histplot(residuals, bins=50, kde=True, color='green')<br>
+            plt.title('Residuals Distribution', fontsize=14)<br>
+            plt.xlabel('Residuals')<br>
+            plt.ylabel('Frequency')<br>
+            plt.show()<br><br>
+
+            # 3. Additional PCA visualization for dimensionality reduction<br>
+            pca = PCA(n_components=2)<br>
+            X_pca = pca.fit_transform(X_scaled)<br>
+            plt.figure(figsize=(8, 6))<br>
+            sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=y, palette='viridis', legend='full')<br>
+            plt.title('PCA of Data', fontsize=14)<br>
+            plt.xlabel('Principal Component 1')<br>
+            plt.ylabel('Principal Component 2')<br>
+            plt.show()
+        </span>
+        </p>
+
+
+
+
+
+<!-- Hyperparameter Tuning for Random Forest and XGBoost -->
+<h1 class="heading">Hyperparameter Tuning for Random Forest and XGBoost</h1>
+
+<div class="image-container">
+    <img src="{{ url_for('static', filename='images/1.6.png') }}" alt="Cross-validation for Linear Regression" style="width: 900px; height: auto;">
+</div>
+
+<p class="paragraph">
+    Hyperparameter tuning for Random Forest and XGBoost was performed using GridSearchCV. This approach helps not only improve the accuracy of the models but also enhances their interpretability for predicting real estate prices.
+    <br><br>
+    <strong>For the Random Forest model, the following optimal parameters were selected:</strong>
+</p>
+
+<ul class="parameter-list">
+    <li><strong>n_estimators</strong>: 50 — the number of trees in the forest. More trees help improve stability and accuracy, as it reduces the impact of outliers or random errors. Fewer trees might miss some important interactions, while increasing the number of trees boosts the model's accuracy.</li>
+    <li><strong>max_depth</strong>: 30 — the maximum depth of trees. A deeper tree can capture more complex relationships in the data, such as the relationship between property size and location. However, too much depth can lead to overfitting, causing the model to be too specific to the training data.</li>
+    <li><strong>min_samples_split</strong>: 2 — the minimum number of samples required to split an internal node. This parameter helps the model adapt better to data by not being too strict about splitting. If it's too large, the model may miss important nuances in smaller data subsets, like homes with few characteristics.</li>
+    <li><strong>min_samples_leaf</strong>: 1 — the minimum number of samples required to be in a leaf node. This helps avoid overfitting when there are very few samples in a node. For instance, homes with unique characteristics (like a custom design) could otherwise be poorly predicted.</li>
+</ul>
+
+<p class="paragraph">
+    <strong>For the XGBoost model, the following optimal parameters were selected:</strong><br><br>
+</p>
+
+<ul class="parameter-list">
+    <li><strong>n_estimators</strong>: 200 — the number of trees in the model. Increasing the number of trees allows the model to capture more subtle patterns, such as minor influences on the property price (e.g., a new feature or improvement).</li>
+    <li><strong>learning_rate</strong>: 0.2 — the learning rate controls how quickly the model adjusts to changes in the data. A higher rate might make the model miss small, meaningful patterns in data, like the impact of a specific feature (e.g., proximity to a school). A lower rate helps capture those subtle variations.</li>
+    <li><strong>max_depth</strong>: 3 — the maximum depth of the trees. Limiting depth helps the model focus on the most significant features and avoid overfitting. For instance, if the model is too deep, it might focus too much on less important features, such as the exact type of flooring or small variations in square footage.</li>
+    <li><strong>subsample</strong>: 0.8 — the fraction of data used for training. This helps the model generalize better and reduces overfitting. For example, if the model over-relies on one neighborhood’s data, it might give an unrealistic price prediction for a similar home in a different area. A lower subsample rate prevents this.</li>
+</ul>
+
+<p class="paragraph">
+    <strong>Conclusion:</strong><br><br>
+    Hyperparameter tuning helps improve the accuracy and precision of the models, enabling better predictions for property prices. For example:
+</p>
+
+<ul class="example-list">
+    <li><strong>Example 1</strong>: If a house has large windows and high-quality finishes but is in a bad neighborhood, a model with well-tuned parameters can predict its price accurately by considering both the positive and negative aspects. Increasing the <strong>max_depth</strong> helps capture complex interactions, such as large windows and low land value, which would otherwise be missed.</li>
+    <li><strong>Example 2</strong>: A properly tuned model can accurately predict the price of a house with unique features, such as a large garage or basement, by taking into account less obvious factors like location. The <strong>subsample</strong> helps the model account for unusual data points and avoid overfitting, thus improving the prediction even for houses with rare features in less populated neighborhoods.</li>
+</ul>
+
+<p class="paragraph">
+    <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+    # Hyperparameter tuning using GridSearchCV for RandomForest and XGBoost<br>
+    rf_param_grid = {<br>
+    'n_estimators': [50, 100, 200],<br>
+    'max_depth': [10, 20, 30],<br>
+    'min_samples_split': [2, 5, 10],<br>
+    'min_samples_leaf': [1, 2, 4]<br>
+    }<br>
+    rf_grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42),<br>
+    param_grid=rf_param_grid,<br>
+    cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+    rf_grid_search.fit(X_train, y_train)<br>
+    print(f"Best parameters for Random Forest: {rf_grid_search.best_params_}")<br>
+    rf_best_model = rf_grid_search.best_estimator_<br><br>
+
+    xgb_param_grid = {<br>
+    'n_estimators': [50, 100, 200],<br>
+    'learning_rate': [0.01, 0.1, 0.2],<br>
+    'max_depth': [3, 6, 10],<br>
+    'subsample': [0.8, 1.0]<br>
+    }<br>
+    xgb_grid_search = GridSearchCV(estimator=xgb.XGBRegressor(random_state=42),<br>
+    param_grid=xgb_param_grid,<br>
+    cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+    xgb_grid_search.fit(X_train, y_train)<br>
+    print(f"Best parameters for XGBoost: {xgb_grid_search.best_params_}")<br>
+    xgb_best_model = xgb_grid_search.best_estimator_
+    </span>
+</p>
+
+
+
+
+<!-- Evaluation of Random Forest and XGBoost Models after GridSearch -->
+<h1 class="heading">Evaluation of Random Forest and XGBoost Models after GridSearch</h1>
+
+<div class="image-container">
+    <img src="{{ url_for('static', filename='images/1.7.png') }}" alt="Cross-validation for Linear Regression" style="width: 300px; height: auto;">
+</div>
+
+<p class="paragraph">
+    <strong>Evaluation of Random Forest Model after GridSearch</strong><br><br>
+    After tuning the hyperparameters for Random Forest, the model showed the following results:
+</p>
+
+<ul>
+    <li><strong>RMSE</strong>: 27,462.76 — this is the average prediction error. The model makes a mistake of about 27 thousand dollars in predicting property prices. The smaller this number, the more accurate the model.</li>
+    <li><strong>R²</strong>: 0.884 — this is the coefficient of determination. It indicates that the model explains 88.4% of the variation in property prices in the test data. A high R² means the model captures the relationship between features and price well.</li>
+</ul>
+
+<p class="paragraph">
+    <strong>Conclusion:</strong> The Random Forest model performs well and has high accuracy.
+</p>
+
+<p class="paragraph">
+    <strong>Evaluation of XGBoost Model after GridSearch</strong><br><br>
+    The results for the XGBoost model are as follows:
+</p>
+
+<ul>
+    <li><strong>RMSE</strong>: 28,011.03 — the error is slightly higher than Random Forest but still within acceptable limits.</li>
+    <li><strong>R²</strong>: 0.879 — the model explains 87.9% of the price variations. This is also a good score but slightly lower than Random Forest.</li>
+</ul>
+
+<p class="paragraph">
+    <strong>Conclusion:</strong> XGBoost is slightly less accurate than Random Forest but still a strong candidate for price prediction.
+</p>
+
+<p class="paragraph">
+    <strong>Code:</strong>
+    <span style="font-style: italic; font-size: small;">
+        # 24. Evaluate best Random Forest model after GridSearch<br>
+        y_pred_rf_best = rf_best_model.predict(X_test)<br>
+        mse_rf_best = mean_squared_error(y_test, y_pred_rf_best)<br>
+        rmse_rf_best = mse_rf_best ** 0.5<br>
+        r2_rf_best = r2_score(y_test, y_pred_rf_best)<br>
+        print(f"Best Random Forest RMSE: {rmse_rf_best}")<br>
+        print(f"Best Random Forest R²: {r2_rf_best}")<br><br>
+
+        # 25. Evaluate best XGBoost model after GridSearch<br>
+        y_pred_xgb_best = xgb_best_model.predict(X_test)<br>
+        mse_xgb_best = mean_squared_error(y_test, y_pred_xgb_best)<br>
+        rmse_xgb_best = mse_xgb_best ** 0.5<br>
+        r2_xgb_best = r2_score(y_test, y_pred_xgb_best)<br>
+        print(f"Best XGBoost RMSE: {rmse_xgb_best}")<br>
+        print(f"Best XGBoost R²: {r2_xgb_best}")
+    </span>
+</p>
+
+
+
+
+        <!-- Conclusion -->
+        <h1 class="heading">Conclusion</h1>
+
+        <p class="paragraph">
+            This project aimed to develop a system that predicts property prices based on various characteristics of the property, such as house size, number of rooms, location, and other important factors. The goal was to create an accurate model capable of predicting housing prices based on historical data. The process began with data preparation, including cleaning and normalizing features to make them suitable for machine learning.
+
+            Three models were used for price prediction: linear regression, random forest, and XGBoost. After training and evaluating the models using RMSE and R² metrics, the best model was selected. Random Forest showed the best results with an RMSE of 27,462 and an R² of 0.884, indicating high accuracy, while XGBoost performed slightly worse with an RMSE of 28,011 and an R² of 0.879, but still delivered strong results.
+
+            Hyperparameter tuning for the models was performed using GridSearchCV, which further improved prediction accuracy. Additionally, feature importance analysis using SHAP was conducted, revealing key factors influencing property prices, such as overall quality, living area, basement area, and year built.
+
+            These results provide valuable insights for real estate professionals. Ultimately, the project demonstrated that the developed system can effectively predict property prices, and the results can be used to improve decision-making in the real estate sector, such as buying and selling properties.
+        </p>
+
+
+
+
+
+        <!-- Code: -->
+        <h1 class="heading">Code:</h1>
+
+
+<p class="paragraph">
+    <span style="font-style: italic; font-size: small;">
+    # 0. Importing libraries<br>
+    import pandas as pd<br>
+    import numpy as np<br>
+    import matplotlib.pyplot as plt<br>
+    import seaborn as sns<br>
+    from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score<br>
+    from sklearn.preprocessing import StandardScaler<br>
+    from sklearn.linear_model import LinearRegression<br>
+    from sklearn.ensemble import RandomForestRegressor<br>
+    import xgboost as xgb<br>
+    from sklearn.metrics import mean_squared_error, r2_score<br>
+    import shap<br>
+    from sklearn.decomposition import PCA<br><br>
+
+    # 1. Load the data<br>
+    train_data = pd.read_csv('/Users/katerynayakymenko/PycharmProjects/Real_Estate/train.csv')<br><br>
+
+    # 2. Initial data analysis<br>
+    print(train_data.head())  # First 5 rows<br>
+    print(train_data.info())  # Column info<br>
+    print(train_data.describe())  # Descriptive statistics for numerical data<br><br>
+
+    # 3. Handle missing values<br>
+    train_data['LotFrontage'] = train_data['LotFrontage'].fillna(train_data['LotFrontage'].median())<br>
+    train_data['Alley'] = train_data['Alley'].fillna(train_data['Alley'].mode()[0])<br>
+    train_data['MasVnrType'] = train_data['MasVnrType'].fillna(train_data['MasVnrType'].mode()[0])<br>
+    train_data['BsmtQual'] = train_data['BsmtQual'].fillna(train_data['BsmtQual'].mode()[0])<br>
+    train_data['BsmtCond'] = train_data['BsmtCond'].fillna(train_data['BsmtCond'].mode()[0])<br>
+    train_data['BsmtExposure'] = train_data['BsmtExposure'].fillna(train_data['BsmtExposure'].mode()[0])<br>
+    train_data['BsmtFinType1'] = train_data['BsmtFinType1'].fillna(train_data['BsmtFinType1'].mode()[0])<br>
+    train_data['BsmtFinType2'] = train_data['BsmtFinType2'].fillna(train_data['BsmtFinType2'].mode()[0])<br>
+    train_data['Electrical'] = train_data['Electrical'].fillna(train_data['Electrical'].mode()[0])<br>
+    train_data['FireplaceQu'] = train_data['FireplaceQu'].fillna(train_data['FireplaceQu'].mode()[0])<br>
+    train_data['GarageType'] = train_data['GarageType'].fillna(train_data['GarageType'].mode()[0])<br>
+    train_data['GarageFinish'] = train_data['GarageFinish'].fillna(train_data['GarageFinish'].mode()[0])<br>
+    train_data['GarageQual'] = train_data['GarageQual'].fillna(train_data['GarageQual'].mode()[0])<br>
+    train_data['GarageCond'] = train_data['GarageCond'].fillna(train_data['GarageCond'].mode()[0])<br>
+    train_data['PoolQC'] = train_data['PoolQC'].fillna(train_data['PoolQC'].mode()[0])<br>
+    train_data['Fence'] = train_data['Fence'].fillna(train_data['Fence'].mode()[0])<br>
+    train_data['MiscFeature'] = train_data['MiscFeature'].fillna(train_data['MiscFeature'].mode()[0])<br>
+
+    # Remove rows with remaining missing values<br>
+    train_data_cleaned = train_data.dropna()<br><br>
+
+    # 4. One-Hot Encoding of categorical variables<br>
+    train_data_cleaned = pd.get_dummies(train_data_cleaned)<br><br>
+
+    # 5. Split the data into features and target variable<br>
+    X = train_data_cleaned.drop('SalePrice', axis=1)<br>
+    y = train_data_cleaned['SalePrice']<br><br>
+
+    # 6. Standardize the numerical data<br>
+    scaler = StandardScaler()<br>
+    X_scaled = scaler.fit_transform(X)<br><br>
+
+    # 7. Split the data into training and testing sets<br>
+    X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)<br><br>
+
+    # 8. Outlier analysis<br>
+    # Use Z-scores to identify outliers<br>
+    from scipy.stats import zscore<br><br>
+
+    z_scores = np.abs(zscore(X_train))<br>
+    X_train_cleaned = X_train[(z_scores < 3).all(axis=1)]<br>
+    y_train_cleaned = y_train[(z_scores < 3).all(axis=1)]<br><br>
+
+    # 9. Train Linear Regression model<br>
+    lr_model = LinearRegression()<br>
+    lr_model.fit(X_train, y_train)<br><br>
+
+    # 10. Predict using Linear Regression<br>
+    y_pred_lr = lr_model.predict(X_test)<br><br>
+
+    # 11. Evaluate Linear Regression model<br>
+    mse_lr = mean_squared_error(y_test, y_pred_lr)<br>
+    rmse_lr = mse_lr ** 0.5<br>
+    r2_lr = r2_score(y_test, y_pred_lr)<br><br>
+
+    print(f"Linear Regression RMSE: {rmse_lr}")<br>
+    print(f"Linear Regression R²: {r2_lr}")<br><br>
+
+    # 12. Cross-validation for Linear Regression<br>
+    cv_lr = cross_val_score(lr_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br>
+    print(f"Linear Regression Cross-validation MSE: {np.mean(cv_lr)}")<br><br>
+
+    # 13. Train Random Forest model<br>
+    rf_model = RandomForestRegressor(n_estimators=100, random_state=42)<br>
+    rf_model.fit(X_train, y_train)<br><br>
+
+    # 14. Predict using Random Forest<br>
+    y_pred_rf = rf_model.predict(X_test)<br><br>
+
+    # 15. Train XGBoost model<br>
+    xgb_model = xgb.XGBRegressor(n_estimators=100, random_state=42)<br>
+    xgb_model.fit(X_train, y_train)<br><br>
+
+    # 16. Predict using XGBoost<br>
+    y_pred_xgb = xgb_model.predict(X_test)<br><br>
+
+    # 17. Evaluate Random Forest model<br>
+    mse_rf = mean_squared_error(y_test, y_pred_rf)<br>
+    rmse_rf = mse_rf ** 0.5<br>
+    r2_rf = r2_score(y_test, y_pred_rf)<br><br>
+
+    print(f"Random Forest RMSE: {rmse_rf}")<br>
+    print(f"Random Forest R²: {r2_rf}")<br><br>
+
+    # 18. Cross-validation for Random Forest<br>
+    cv_rf = cross_val_score(rf_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br>
+    print(f"Random Forest Cross-validation MSE: {np.mean(cv_rf)}")<br><br>
+
+    # 19. Evaluate XGBoost model<br>
+    mse_xgb = mean_squared_error(y_test, y_pred_xgb)<br>
+    rmse_xgb = mse_xgb ** 0.5<br>
+    r2_xgb = r2_score(y_test, y_pred_xgb)<br><br>
+
+    print(f"XGBoost RMSE: {rmse_xgb}")<br>
+    print(f"XGBoost R²: {r2_xgb}")<br><br>
+
+    # 20. Model interpretation with SHAP<br>
+    X_train_df = pd.DataFrame(X_train, columns=X.columns)<br>
+    X_test_df = pd.DataFrame(X_test, columns=X.columns)<br><br>
+
+    # SHAP explainer<br>
+    explainer = shap.Explainer(xgb_model, X_train_df)<br>
+    shap_values = explainer(X_test_df)<br><br>
+
+    # Feature importance visualization<br>
+    shap.summary_plot(shap_values, X_test_df)<br><br>
+
+    # 21. Additional visualizations:<br>
+    # 1. Actual vs Predicted Prices plot<br>
+    plt.figure(figsize=(8, 6))<br>
+    plt.scatter(y_test, y_pred_xgb, alpha=0.7, color='blue')<br>
+    plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')<br>
+    plt.title('Actual vs Predicted Prices (XGBoost)', fontsize=14)<br>
+    plt.xlabel('Actual Prices')<br>
+    plt.ylabel('Predicted Prices')<br>
+    plt.show()<br><br>
+
+    # 2. Residuals plot<br>
+    residuals = y_test - y_pred_xgb<br>
+    plt.figure(figsize=(8, 6))<br>
+    sns.histplot(residuals, bins=50, kde=True, color='green')<br>
+    plt.title('Residuals Distribution', fontsize=14)<br>
+    plt.xlabel('Residuals')<br>
+    plt.ylabel('Frequency')<br>
+    plt.show()<br><br>
+
+    # 3. Additional PCA visualization for dimensionality reduction<br>
+    pca = PCA(n_components=2)<br>
+    X_pca = pca.fit_transform(X_scaled)<br>
+    plt.figure(figsize=(8, 6))<br>
+    sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=y, palette='viridis', legend='full')<br>
+    plt.title('PCA of Data', fontsize=14)<br>
+    plt.xlabel('Principal Component 1')<br>
+    plt.ylabel('Principal Component 2')<br>
+    plt.show();<br><br>
+
+
+    # 22. Hyperparameter tuning using GridSearchCV for RandomForest<br>
+    rf_param_grid = {<br>
+        'n_estimators': [50, 100, 200],<br>
+        'max_depth': [10, 20, 30],<br>
+        'min_samples_split': [2, 5, 10],<br>
+        'min_samples_leaf': [1, 2, 4]<br>
+    }<br>
+    rf_grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42),<br>
+                                  param_grid=rf_param_grid,<br>
+                                  cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+    rf_grid_search.fit(X_train, y_train)<br>
+    print(f"Best parameters for Random Forest: {rf_grid_search.best_params_}")<br>
+    rf_best_model = rf_grid_search.best_estimator_<br><br>
+
+    # 23. Hyperparameter tuning using GridSearchCV for XGBoost<br>
+    xgb_param_grid = {<br>
+        'n_estimators': [50, 100, 200],<br>
+        'learning_rate': [0.01, 0.1, 0.2],<br>
+        'max_depth': [3, 6, 10],<br>
+        'subsample': [0.8, 1.0]<br>
+    }<br>
+    xgb_grid_search = GridSearchCV(estimator=xgb.XGBRegressor(random_state=42),<br>
+                                   param_grid=xgb_param_grid,<br>
+                                   cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+    xgb_grid_search.fit(X_train, y_train)<br>
+    print(f"Best parameters for XGBoost: {xgb_grid_search.best_params_}")<br>
+    xgb_best_model = xgb_grid_search.best_estimator_<br><br>
+
+    # 24. Evaluate best Random Forest model after GridSearch<br>
+    y_pred_rf_best = rf_best_model.predict(X_test)<br>
+    mse_rf_best = mean_squared_error(y_test, y_pred_rf_best)<br>
+    rmse_rf_best = mse_rf_best ** 0.5<br>
+    r2_rf_best = r2_score(y_test, y_pred_rf_best)<br>
+    print(f"Best Random Forest RMSE: {rmse_rf_best}")<br>
+    print(f"Best Random Forest R²: {r2_rf_best}")<br><br>
+
+    # 25. Evaluate best XGBoost model after GridSearch<br>
+    y_pred_xgb_best = xgb_best_model.predict(X_test)<br>
+    mse_xgb_best = mean_squared_error(y_test, y_pred_xgb_best)<br>
+    rmse_xgb_best = mse_xgb_best ** 0.5<br>
+    r2_xgb_best = r2_score(y_test, y_pred_xgb_best)<br>
+    print(f"Best XGBoost RMSE: {rmse_xgb_best}")<br>
+    print(f"Best XGBoost R²: {r2_xgb_best}")<br><br>
+
+    </span>
+</p>
+
+
+
+
+
+
+
 </body>
 </html>

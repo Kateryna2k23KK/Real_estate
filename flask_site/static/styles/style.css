@@ -1,36 +1,133 @@
-/* Сброс отступов и полей */
+/* Reset margins and paddings */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Картинка, которая занимает всю ширину экрана */
+
+/* Image that takes up the entire width of the screen */
 img {
-    width: 100vw;  /* Заполняет всю ширину экрана */
-    height: 50vh; /* Заполняет всю высоту экрана */
-    object-fit: cover; /* Обрезает изображение, чтобы оно полностью заполняло экран */
-    display: block; /* Убирает возможные отступы снизу */
+    width: 100vw;  /* Fills the entire width of the screen */
+    height: 50vh; /* Fills the entire height of the screen */
+    object-fit: cover; /* Crops the image to fully fill the screen */
+    display: block; /* Removes any bottom margin */
 }
 
-/* Контейнер для контента */
+/* Content container */
 .content {
-    padding: 20px;
-    margin: 0 auto;  /* Выравнивание по центру */
-    max-width: 1300px;  /* Фиксированная ширина контента */
-    text-align: left;  /* Выравнивание текста по левой стороне */
+    padding: 20px;  /* Added padding on the sides */
+    margin: 0 auto;  /* Centered alignment */
+    max-width: 1300px;  /* Fixed content width */
+    text-align: left;  /* Left-aligns the text */
 }
 
-/* Стиль для заголовков */
+/* Heading style */
 .heading {
-    font-size: 2em;
+    font-size: 1.5em;  /* Reduces font size */
     font-weight: bold;
     margin-bottom: 10px;
+    margin-top: 40px; /* Top margin */
+    padding: 20px; /* Added padding on the sides */
 }
 
-/* Стиль для абзацев */
+/* Paragraph style */
 .paragraph {
-    font-size: 1.2em;
-    line-height: 1.6;
+    font-size: 1em;
+    line-height: 1.5;
     margin-bottom: 20px;
+    padding: 20px; /* Added padding on the sides */
+}
+
+/* Container for images under the heading */
+.image-container {
+    text-align: left; /* Left-aligns the images */
+    margin-bottom: 20px; /* Bottom margin for the container */
+}
+
+/* Main small image */
+.sub-image-small {
+    max-width: 400px; /* Limits the maximum width of the image */
+    height: auto; /* Maintains aspect ratio */
+    display: block; /* Removes any bottom margin */
+}
+
+/* Second small image (smaller) */
+.second-image {
+    max-width: 350px; /* Slightly smaller than the first image */
+}
+
+.sub-image-large {
+    width: 80%; /* Or more, e.g., 90% */
+    max-width: 1200px; /* Limitation to prevent excessive stretching */
+    display: block;
+    margin: 0 auto;
+}
+
+
+
+/* Style for the list */
+.library-list {
+    margin-top: 20px; /* Top margin for the list */
+    padding-left: 20px; /* Left padding for the list */
+}
+
+.library-list li {
+    margin-bottom: 10px; /* Margin between list items */
+}
+
+
+/* Styling of parameter list */
+.parameter-list,
+.example-list {
+    margin-top: 20px;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.parameter-list li,
+.example-list li {
+    margin-bottom: 15px;
+}
+
+/* Image */
+.image-container img {
+    width: 900px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Code */
+span {
+    font-style: italic;
+    font-size: small;
+    display: block;
+    margin-top: 20px;
+}
+
+/* Styling of parameter list */
+ul {
+    margin-top: 20px;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+ul li {
+    margin-bottom: 15px;
+}
+
+/* Image */
+.image-container img {
+    width: 300px;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+/* Code */
+span {
+    font-style: italic;
+    font-size: small;
+    display: block;
+    margin-top: 20px;
+}
 }

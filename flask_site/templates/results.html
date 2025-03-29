@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Results</title>
+</head>
+<body>
+    <h1>Model Evaluation Results</h1>
+
+    <h2>Evaluation Metrics</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Model</th>
+                <th>RMSE</th>
+                <th>R²</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for model, metrics in evaluation_results.items() %}
+            <tr>
+                <td>{{ model }}</td>
+                <td>{{ metrics.RMSE }}</td>
+                <td>{{ metrics.R2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>SHAP Feature Importance Plot</h2>
+    <img src="data:image/png;base64,{{ shap_plot_base64 }}" alt="SHAP Plot">
+
+    <br><br>
+    <a href="/">Upload another file</a>
+</body>
+</html>
