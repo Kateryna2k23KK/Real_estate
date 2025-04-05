@@ -184,10 +184,6 @@
 
 
 
-
-
-
-
     <!-- Train Linear Regression Model -->
     <h1 class="heading">Train Linear Regression Model</h1>
     <p class="paragraph">
@@ -201,6 +197,7 @@
         lr_model.fit(X_train, y_train)
     </span>
     </p>
+
 
 
 
@@ -218,6 +215,53 @@
     </p>
 
 
+
+
+    <!-- Linear Regression Model Evaluation -->
+    <h1 class="heading">Linear Regression Model Evaluation</h1>
+    <div class="image-container">
+        <!-- Image for linear regression model evaluation -->
+        <img src="{{ url_for('static', filename='images/1.3.png') }}" alt="Image for model evaluation" class="sub-image-small">
+    </div>
+
+    <p class="paragraph">
+        The linear regression model was evaluated using two key metrics: RMSE (Root Mean Squared Error) and R² (Coefficient of Determination). The RMSE value was 27,986.89, indicating the average deviation between the actual and predicted house prices. The R² value was 0.88, meaning the model explains 88% of the variance in the target variable (SalePrice), which demonstrates a good model accuracy.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 11. Evaluate Linear Regression model<br>
+            mse_lr = mean_squared_error(y_test, y_pred_lr)<br>
+            rmse_lr = mse_lr ** 0.5<br>
+            r2_lr = r2_score(y_test, y_pred_lr)<br><br>
+
+            print(f"Linear Regression RMSE: {rmse_lr}")<br>
+            print(f"Linear Regression R²: {r2_lr}")
+    </span>
+    </p>
+
+
+
+
+    <!-- Cross-validation for Linear Regression -->
+    <h1 class="heading">Cross-validation for Linear Regression</h1>
+    <div class="image-container">
+        <!-- Image for cross-validation of a linear regression model -->
+        <img src="{{ url_for('static', filename='images/1.4.png') }}" alt="Cross-validation for Linear Regression" class="sub-image-small">
+    </div>
+
+    <p class="paragraph">
+        Cross-validation with 5 folds was performed to evaluate the linear regression model. The average Mean Squared Error (MSE) was -1,361,427,316.34. The negative value indicates that a negative error score is used, but this helps understand how the model will perform on different subsets of the data. The lower the error, the more accurate the model.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 12. Cross-validation for Linear Regression<br>
+            cv_lr = cross_val_score(lr_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br><br>
+
+            print(f"Linear Regression Cross-validation MSE: {np.mean(cv_lr)}")
+    </span>
+    </p>
 
 
 
