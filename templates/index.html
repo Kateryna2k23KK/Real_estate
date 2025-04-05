@@ -267,10 +267,6 @@
 
 
 
-
-
-
-
     <!-- Training and Prediction with Random Forest and XGBoost -->
     <h1 class="heading">Training and Prediction with Random Forest and XGBoost</h1>
     <p class="paragraph">
@@ -568,6 +564,232 @@
 
 
 
+
+    <!-- Conclusion -->
+    <h1 class="heading">Conclusion</h1>
+    <p class="paragraph">
+        This project aimed to develop a system that predicts property prices based on various characteristics of the property, such as house size, number of rooms, location, and other important factors. The goal was to create an accurate model capable of predicting housing prices based on historical data. The process began with data preparation, including cleaning and normalizing features to make them suitable for machine learning.
+
+        Three models were used for price prediction: linear regression, random forest, and XGBoost. After training and evaluating the models using RMSE and R² metrics, the best model was selected. Random Forest showed the best results with an RMSE of 27,462 and an R² of 0.884, indicating high accuracy, while XGBoost performed slightly worse with an RMSE of 28,011 and an R² of 0.879, but still delivered strong results.
+
+        Hyperparameter tuning for the models was performed using GridSearchCV, which further improved prediction accuracy. Additionally, feature importance analysis using SHAP was conducted, revealing key factors influencing property prices, such as overall quality, living area, basement area, and year built.
+
+        These results provide valuable insights for real estate professionals. Ultimately, the project demonstrated that the developed system can effectively predict property prices, and the results can be used to improve decision-making in the real estate sector, such as buying and selling properties.
+    </p>
+
+
+
+
+
+    <!-- Code: -->
+    <h1 class="heading">Code:</h1>
+    <p class="paragraph">
+        <span style="font-style: italic; font-size: small;">
+            # 0. Importing libraries<br>
+            import pandas as pd<br>
+            import numpy as np<br>
+            import matplotlib.pyplot as plt<br>
+            import seaborn as sns<br>
+            from sklearn.model_selection import train_test_split, GridSearchCV, cross_val_score<br>
+            from sklearn.preprocessing import StandardScaler<br>
+            from sklearn.linear_model import LinearRegression<br>
+            from sklearn.ensemble import RandomForestRegressor<br>
+            import xgboost as xgb<br>
+            from sklearn.metrics import mean_squared_error, r2_score<br>
+            import shap<br>
+            from sklearn.decomposition import PCA<br><br>
+
+            # 1. Load the data<br>
+            train_data = pd.read_csv('/Users/katerynayakymenko/PycharmProjects/Real_Estate/train.csv')<br><br>
+
+            # 2. Initial data analysis<br>
+            print(train_data.head())  # First 5 rows<br>
+            print(train_data.info())  # Column info<br>
+            print(train_data.describe())  # Descriptive statistics for numerical data<br><br>
+
+            # 3. Handle missing values<br>
+            train_data['LotFrontage'] = train_data['LotFrontage'].fillna(train_data['LotFrontage'].median())<br>
+            train_data['Alley'] = train_data['Alley'].fillna(train_data['Alley'].mode()[0])<br>
+            train_data['MasVnrType'] = train_data['MasVnrType'].fillna(train_data['MasVnrType'].mode()[0])<br>
+            train_data['BsmtQual'] = train_data['BsmtQual'].fillna(train_data['BsmtQual'].mode()[0])<br>
+            train_data['BsmtCond'] = train_data['BsmtCond'].fillna(train_data['BsmtCond'].mode()[0])<br>
+            train_data['BsmtExposure'] = train_data['BsmtExposure'].fillna(train_data['BsmtExposure'].mode()[0])<br>
+            train_data['BsmtFinType1'] = train_data['BsmtFinType1'].fillna(train_data['BsmtFinType1'].mode()[0])<br>
+            train_data['BsmtFinType2'] = train_data['BsmtFinType2'].fillna(train_data['BsmtFinType2'].mode()[0])<br>
+            train_data['Electrical'] = train_data['Electrical'].fillna(train_data['Electrical'].mode()[0])<br>
+            train_data['FireplaceQu'] = train_data['FireplaceQu'].fillna(train_data['FireplaceQu'].mode()[0])<br>
+            train_data['GarageType'] = train_data['GarageType'].fillna(train_data['GarageType'].mode()[0])<br>
+            train_data['GarageFinish'] = train_data['GarageFinish'].fillna(train_data['GarageFinish'].mode()[0])<br>
+            train_data['GarageQual'] = train_data['GarageQual'].fillna(train_data['GarageQual'].mode()[0])<br>
+            train_data['GarageCond'] = train_data['GarageCond'].fillna(train_data['GarageCond'].mode()[0])<br>
+            train_data['PoolQC'] = train_data['PoolQC'].fillna(train_data['PoolQC'].mode()[0])<br>
+            train_data['Fence'] = train_data['Fence'].fillna(train_data['Fence'].mode()[0])<br>
+            train_data['MiscFeature'] = train_data['MiscFeature'].fillna(train_data['MiscFeature'].mode()[0])<br>
+
+            # Remove rows with remaining missing values<br>
+            train_data_cleaned = train_data.dropna()<br><br>
+
+            # 4. One-Hot Encoding of categorical variables<br>
+            train_data_cleaned = pd.get_dummies(train_data_cleaned)<br><br>
+
+            # 5. Split the data into features and target variable<br>
+            X = train_data_cleaned.drop('SalePrice', axis=1)<br>
+            y = train_data_cleaned['SalePrice']<br><br>
+
+            # 6. Standardize the numerical data<br>
+            scaler = StandardScaler()<br>
+            X_scaled = scaler.fit_transform(X)<br><br>
+
+            # 7. Split the data into training and testing sets<br>
+            X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)<br><br>
+
+            # 8. Outlier analysis<br>
+            # Use Z-scores to identify outliers<br>
+            from scipy.stats import zscore<br><br>
+
+            z_scores = np.abs(zscore(X_train))<br>
+            X_train_cleaned = X_train[(z_scores < 3).all(axis=1)]<br>
+            y_train_cleaned = y_train[(z_scores < 3).all(axis=1)]<br><br>
+
+            # 9. Train Linear Regression model<br>
+            lr_model = LinearRegression()<br>
+            lr_model.fit(X_train, y_train)<br><br>
+
+            # 10. Predict using Linear Regression<br>
+            y_pred_lr = lr_model.predict(X_test)<br><br>
+
+            # 11. Evaluate Linear Regression model<br>
+            mse_lr = mean_squared_error(y_test, y_pred_lr)<br>
+            rmse_lr = mse_lr ** 0.5<br>
+            r2_lr = r2_score(y_test, y_pred_lr)<br><br>
+
+            print(f"Linear Regression RMSE: {rmse_lr}")<br>
+            print(f"Linear Regression R²: {r2_lr}")<br><br>
+
+            # 12. Cross-validation for Linear Regression<br>
+            cv_lr = cross_val_score(lr_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br>
+            print(f"Linear Regression Cross-validation MSE: {np.mean(cv_lr)}")<br><br>
+
+            # 13. Train Random Forest model<br>
+            rf_model = RandomForestRegressor(n_estimators=100, random_state=42)<br>
+            rf_model.fit(X_train, y_train)<br><br>
+
+            # 14. Predict using Random Forest<br>
+            y_pred_rf = rf_model.predict(X_test)<br><br>
+
+            # 15. Train XGBoost model<br>
+            xgb_model = xgb.XGBRegressor(n_estimators=100, random_state=42)<br>
+            xgb_model.fit(X_train, y_train)<br><br>
+
+            # 16. Predict using XGBoost<br>
+            y_pred_xgb = xgb_model.predict(X_test)<br><br>
+
+            # 17. Evaluate Random Forest model<br>
+            mse_rf = mean_squared_error(y_test, y_pred_rf)<br>
+            rmse_rf = mse_rf ** 0.5<br>
+            r2_rf = r2_score(y_test, y_pred_rf)<br><br>
+
+            print(f"Random Forest RMSE: {rmse_rf}")<br>
+            print(f"Random Forest R²: {r2_rf}")<br><br>
+
+            # 18. Cross-validation for Random Forest<br>
+            cv_rf = cross_val_score(rf_model, X_train, y_train, cv=5, scoring='neg_mean_squared_error')<br>
+            print(f"Random Forest Cross-validation MSE: {np.mean(cv_rf)}")<br><br>
+
+            # 19. Evaluate XGBoost model<br>
+            mse_xgb = mean_squared_error(y_test, y_pred_xgb)<br>
+            rmse_xgb = mse_xgb ** 0.5<br>
+            r2_xgb = r2_score(y_test, y_pred_xgb)<br><br>
+
+            print(f"XGBoost RMSE: {rmse_xgb}")<br>
+            print(f"XGBoost R²: {r2_xgb}")<br><br>
+
+            # 20. Model interpretation with SHAP<br>
+            X_train_df = pd.DataFrame(X_train, columns=X.columns)<br>
+            X_test_df = pd.DataFrame(X_test, columns=X.columns)<br><br>
+
+            # SHAP explainer<br>
+            explainer = shap.Explainer(xgb_model, X_train_df)<br>
+            shap_values = explainer(X_test_df)<br><br>
+
+            # Feature importance visualization<br>
+            shap.summary_plot(shap_values, X_test_df)<br><br>
+
+            # 21. Additional visualizations:<br>
+            # 1. Actual vs Predicted Prices plot<br>
+            plt.figure(figsize=(8, 6))<br>
+            plt.scatter(y_test, y_pred_xgb, alpha=0.7, color='blue')<br>
+            plt.plot([min(y_test), max(y_test)], [min(y_test), max(y_test)], color='red', linestyle='--')<br>
+            plt.title('Actual vs Predicted Prices (XGBoost)', fontsize=14)<br>
+            plt.xlabel('Actual Prices')<br>
+            plt.ylabel('Predicted Prices')<br>
+            plt.show()<br><br>
+
+            # 2. Residuals plot<br>
+            residuals = y_test - y_pred_xgb<br>
+            plt.figure(figsize=(8, 6))<br>
+            sns.histplot(residuals, bins=50, kde=True, color='green')<br>
+            plt.title('Residuals Distribution', fontsize=14)<br>
+            plt.xlabel('Residuals')<br>
+            plt.ylabel('Frequency')<br>
+            plt.show()<br><br>
+
+            # 3. Additional PCA visualization for dimensionality reduction<br>
+            pca = PCA(n_components=2)<br>
+            X_pca = pca.fit_transform(X_scaled)<br>
+            plt.figure(figsize=(8, 6))<br>
+            sns.scatterplot(x=X_pca[:, 0], y=X_pca[:, 1], hue=y, palette='viridis', legend='full')<br>
+            plt.title('PCA of Data', fontsize=14)<br>
+            plt.xlabel('Principal Component 1')<br>
+            plt.ylabel('Principal Component 2')<br>
+            plt.show();<br><br>
+
+
+            # 22. Hyperparameter tuning using GridSearchCV for RandomForest<br>
+            rf_param_grid = {<br>
+            'n_estimators': [50, 100, 200],<br>
+            'max_depth': [10, 20, 30],<br>
+            'min_samples_split': [2, 5, 10],<br>
+            'min_samples_leaf': [1, 2, 4]<br>
+            }<br>
+            rf_grid_search = GridSearchCV(estimator=RandomForestRegressor(random_state=42),<br>
+            param_grid=rf_param_grid,<br>
+            cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+            rf_grid_search.fit(X_train, y_train)<br>
+            print(f"Best parameters for Random Forest: {rf_grid_search.best_params_}")<br>
+            rf_best_model = rf_grid_search.best_estimator_<br><br>
+
+            # 23. Hyperparameter tuning using GridSearchCV for XGBoost<br>
+            xgb_param_grid = {<br>
+            'n_estimators': [50, 100, 200],<br>
+            'learning_rate': [0.01, 0.1, 0.2],<br>
+            'max_depth': [3, 6, 10],<br>
+            'subsample': [0.8, 1.0]<br>
+            }<br>
+            xgb_grid_search = GridSearchCV(estimator=xgb.XGBRegressor(random_state=42),<br>
+            param_grid=xgb_param_grid,<br>
+            cv=3, scoring='neg_mean_squared_error', n_jobs=-1)<br>
+            xgb_grid_search.fit(X_train, y_train)<br>
+            print(f"Best parameters for XGBoost: {xgb_grid_search.best_params_}")<br>
+            xgb_best_model = xgb_grid_search.best_estimator_<br><br>
+
+            # 24. Evaluate best Random Forest model after GridSearch<br>
+            y_pred_rf_best = rf_best_model.predict(X_test)<br>
+            mse_rf_best = mean_squared_error(y_test, y_pred_rf_best)<br>
+            rmse_rf_best = mse_rf_best ** 0.5<br>
+            r2_rf_best = r2_score(y_test, y_pred_rf_best)<br>
+            print(f"Best Random Forest RMSE: {rmse_rf_best}")<br>
+            print(f"Best Random Forest R²: {r2_rf_best}")<br><br>
+
+            # 25. Evaluate best XGBoost model after GridSearch<br>
+            y_pred_xgb_best = xgb_best_model.predict(X_test)<br>
+            mse_xgb_best = mean_squared_error(y_test, y_pred_xgb_best)<br>
+            rmse_xgb_best = mse_xgb_best ** 0.5<br>
+            r2_xgb_best = r2_score(y_test, y_pred_xgb_best)<br>
+            print(f"Best XGBoost RMSE: {rmse_xgb_best}")<br>
+            print(f"Best XGBoost R²: {r2_xgb_best}")<br><br>
+        </span>
+    </p>
 
 
 
