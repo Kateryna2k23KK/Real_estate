@@ -128,6 +128,62 @@
 
 
 
+    <!-- Split and Standardize the Data -->
+    <h1 class="heading">Split and Standardize the Data</h1>
+    <p class="paragraph">
+        We split the data into features (`X`) and the target variable (`y`), separating the `SalePrice` column from the rest of the dataset. Then, we standardized the numerical features using `StandardScaler`, which transforms the data to have a mean of 0 and a standard deviation of 1. This step helps improve the performance of machine learning algorithms.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+        # 5. Split the data into features and target variable<br>
+        X = train_data_cleaned.drop('SalePrice', axis=1)<br>
+        y = train_data_cleaned['SalePrice']<br><br>
+
+        # 6. Standardize the numerical data<br>
+        scaler = StandardScaler()<br>
+        X_scaled = scaler.fit_transform(X)
+    </span>
+    </p>
+
+
+
+
+    <!-- Split the Data into Training and Testing Sets -->
+    <h1 class="heading">Split the Data into Training and Testing Sets</h1>
+    <p class="paragraph">
+        The data was split into training and testing sets, with 80% of the data used for training the model and 20% reserved for testing. This approach helps evaluate the model's performance on unseen data and prevents overfitting. The `random_state` value ensures the reproducibility of the data splitting.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 7. Split the data into training and testing sets<br>
+            X_train, X_test, y_train, y_test = train_test_split(X_scaled, y, test_size=0.2, random_state=42)
+    </span>
+    </p>
+
+
+
+
+    <!-- Outlier Analysis -->
+    <h1 class="heading">Outlier Analysis</h1>
+    <p class="paragraph">
+        Outliers were identified using Z-scores, and data points with a Z-score greater than 3 were removed from the training set. This step helped eliminate extreme values that could negatively affect the model, improving its stability and accuracy.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 8. Outlier analysis<br>
+            # Use Z-scores to identify outliers<br>
+            from scipy.stats import zscore<br><br>
+
+            z_scores = np.abs(zscore(X_train))<br>
+            X_train_cleaned = X_train[(z_scores < 3).all(axis=1)]<br>
+            y_train_cleaned = y_train[(z_scores < 3).all(axis=1)]
+    </span>
+    </p>
+
+
 
 </body>
 </html>
