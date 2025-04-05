@@ -164,5 +164,65 @@
 
 
 
+    <!-- Outlier Analysis -->
+    <h1 class="heading">Outlier Analysis</h1>
+    <p class="paragraph">
+        Outliers were identified using Z-scores, and data points with a Z-score greater than 3 were removed from the training set. This step helped eliminate extreme values that could negatively affect the model, improving its stability and accuracy.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+        # 8. Outlier analysis<br>
+        # Use Z-scores to identify outliers<br>
+        from scipy.stats import zscore<br><br>
+
+        z_scores = np.abs(zscore(X_train))<br>
+        X_train_cleaned = X_train[(z_scores < 3).all(axis=1)]<br>
+        y_train_cleaned = y_train[(z_scores < 3).all(axis=1)]
+    </span>
+    </p>
+
+
+
+
+
+
+
+    <!-- Train Linear Regression Model -->
+    <h1 class="heading">Train Linear Regression Model</h1>
+    <p class="paragraph">
+       The Linear Regression model was trained using the cleaned and preprocessed training data. This step establishes a baseline model to predict house prices based on the features, helping to evaluate the relationship between the predictors and the target variable.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+        # 9. Train Linear Regression model<br>
+        lr_model = LinearRegression()<br>
+        lr_model.fit(X_train, y_train)
+    </span>
+    </p>
+
+
+
+    <!-- Predictions using Linear Regression -->
+    <h1 class="heading">Predictions using Linear Regression</h1>
+    <p class="paragraph">
+        After training the linear regression model, predictions were made for the test dataset. This allows assessing how well the model can predict house prices based on new data it hasn't seen during training.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+        # 10. Predict using Linear Regression<br>
+        y_pred_lr = lr_model.predict(X_test)
+    </span>
+    </p>
+
+
+
+
+
+
+
+
 </body>
 </html>
