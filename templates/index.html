@@ -38,5 +38,96 @@
     </div>
 
 
+
+
+    <!-- Importing libraries -->
+    <h1 class="heading">Importing libraries</h1>
+
+    <p class="paragraph">
+        To begin the analysis, the following libraries need to be imported, as they will be used throughout the process. These libraries provide essential tools for data manipulation, model training, and performance evaluation. The list of libraries:
+    <ul class="library-list">
+        <li><strong>pandas</strong> - for loading and manipulating data.</li>
+        <li><strong>numpy</strong> - for performing numerical operations.</li>
+        <li><strong>matplotlib.pyplot and seaborn</strong> - for visualizing data and creating plots.</li>
+        <li><strong>sklearn.model_selection</strong> - for splitting the data into training and test sets, cross-validation, and hyperparameter tuning.</li>
+        <li><strong>sklearn.preprocessing</strong> - for scaling and normalizing the data.</li>
+        <li><strong>sklearn.linear_model</strong> - for training and evaluating the linear regression model.</li>
+        <li><strong>sklearn.ensemble</strong> - for working with the random forest model.</li>
+        <li><strong>xgboost</strong> - for working with the XGBoost model.</li>
+        <li><strong>sklearn.metrics</strong> - for evaluating model performance using metrics like RMSE, R², and MSE.</li>
+        <li><strong>shap</strong> - for interpreting model predictions and visualizing feature importance.</li>
+        <li><strong>sklearn.decomposition</strong> - for dimensionality reduction using PCA.</li>
+    </ul>
+    </p>
+
+
+
+    <!-- Data loading and initial data analysis -->
+    <h1 class="heading">Data loading and initial data analysis</h1>
+    <div class="image-container">
+        <!-- mage for the second paragraph -->
+        <img src="{{ url_for('static', filename='images/1.1.png') }}" alt="Image under Heading 4" class="sub-image-small">
+        <img src="{{ url_for('static', filename='images/1.2.png') }}" alt="Image under Heading 4" class="sub-image-small">
+    </div>
+    <p class="paragraph">
+        The data contains 1460 rows and 81 columns. The target variable, `SalePrice`, ranges from 34,900 to 755,000, with an average value of 180,921. There are missing values in some columns, such as `LotFrontage`, `MasVnrType`, `PoolQC`, and others. Columns with numerical data, such as `OverallQual`, `GrLivArea`, and `TotRmsAbvGrd`, have a strong correlation with the sale price.
+    </p>
+
+    <p class="paragraph">
+       The dataset includes many categorical features, such as `MSZoning`, `Street`, and `GarageType`, which require encoding for use in models. Additionally, numerical data will need to be scaled to improve the performance of machine learning models.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 1. Load the data<br>
+            train_data = pd.read_csv('...')<br><br>
+
+            # 2. Initial data analysis<br>
+            print(train_data.head())  # First 5 rows<br>
+            print(train_data.info())  # Information about columns<br>
+            print(train_data.describe())  # Descriptive statistics for numerical data
+    </span>
+    </p>
+
+
+
+    <!-- Handling missing values and encoding categorical variables -->
+    <h1 class="heading">Handling missing values and encoding categorical variables</h1>
+    <p class="paragraph">
+        We filled missing values in numerical columns like `LotFrontage` with the median, and in categorical columns such as `Alley`, `MasVnrType`, with the mode. After that, we removed rows with remaining missing values. Then, we applied One-Hot Encoding to categorical features, transforming them into binary columns. This process helped prepare the data for analysis and modeling, minimizing information loss and correctly handling categorical variables.
+    </p>
+
+    <p class="paragraph">
+        <strong>Code:</strong> <span style="font-style: italic; font-size: small;">
+            # 3. Handle missing values<br>
+            train_data['LotFrontage'] = train_data['LotFrontage'].fillna(train_data['LotFrontage'].median())<br>
+            train_data['Alley'] = train_data['Alley'].fillna(train_data['Alley'].mode()[0])<br>
+            train_data['MasVnrType'] = train_data['MasVnrType'].fillna(train_data['MasVnrType'].mode()[0])<br>
+            train_data['BsmtQual'] = train_data['BsmtQual'].fillna(train_data['BsmtQual'].mode()[0])<br>
+            train_data['BsmtCond'] = train_data['BsmtCond'].fillna(train_data['BsmtCond'].mode()[0])<br>
+            train_data['BsmtExposure'] = train_data['BsmtExposure'].fillna(train_data['BsmtExposure'].mode()[0])<br>
+            train_data['BsmtFinType1'] = train_data['BsmtFinType1'].fillna(train_data['BsmtFinType1'].mode()[0])<br>
+            train_data['BsmtFinType2'] = train_data['BsmtFinType2'].fillna(train_data['BsmtFinType2'].mode()[0])<br>
+            train_data['Electrical'] = train_data['Electrical'].fillna(train_data['Electrical'].mode()[0])<br>
+            train_data['FireplaceQu'] = train_data['FireplaceQu'].fillna(train_data['FireplaceQu'].mode()[0])<br>
+            train_data['GarageType'] = train_data['GarageType'].fillna(train_data['GarageType'].mode()[0])<br>
+            train_data['GarageFinish'] = train_data['GarageFinish'].fillna(train_data['GarageFinish'].mode()[0])<br>
+            train_data['GarageQual'] = train_data['GarageQual'].fillna(train_data['GarageQual'].mode()[0])<br>
+            train_data['GarageCond'] = train_data['GarageCond'].fillna(train_data['GarageCond'].mode()[0])<br>
+            train_data['PoolQC'] = train_data['PoolQC'].fillna(train_data['PoolQC'].mode()[0])<br>
+            train_data['Fence'] = train_data['Fence'].fillna(train_data['Fence'].mode()[0])<br>
+            train_data['MiscFeature'] = train_data['MiscFeature'].fillna(train_data['MiscFeature'].mode()[0])<br><br>
+
+            # Remove rows with remaining missing values<br>
+            train_data_cleaned = train_data.dropna()<br><br>
+
+            # 4. One-Hot Encoding of categorical variables<br>
+            train_data_cleaned = pd.get_dummies(train_data_cleaned)<br>
+    </span>
+    </p>
+
+
+
+
 </body>
 </html>
